@@ -20,7 +20,7 @@ setuptools.setup(
         'tests': tests_requires,
         'complete': data_requires + ml_requires + tests_requires,
     },
-    url='https://github.com/',
+    url='https://github.com/hashimmg/jax_IB',
     packages=setuptools.find_packages(),
     python_requires='>=3',
 )
