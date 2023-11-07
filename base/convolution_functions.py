@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 
 
-def delta_approx_logistjax(x,x0,w,K):
+def delta_approx_logistjax(x,x0,w):
     
     return 1/(w*jnp.sqrt(2*jnp.pi))*jnp.exp(-0.5*((x-x0)/w)**2)
 
