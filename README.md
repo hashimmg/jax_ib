@@ -38,5 +38,43 @@ The repository contains two examples:
 - Flapping of an ellipse airfoi
 - Mixing in Journal bearing
 
+### Other Packages Used
+This project relies on the following external packages:
+
+jax-cfd, jax-md
+
+Citing External Packages
+If you use this code in your research and make use of the external packages listed, please ensure to cite the relevant works. Here are the citations for the packages used in this project:
+
+Package 1: jax-cfd
+```bash 
+@article{Kochkov2021-ML-CFD,
+  author = {Kochkov, Dmitrii and Smith, Jamie A. and Alieva, Ayya and Wang, Qing and Brenner, Michael P. and Hoyer, Stephan},
+  title = {Machine learning{\textendash}accelerated computational fluid dynamics},
+  volume = {118},
+  number = {21},
+  elocation-id = {e2101784118},
+  year = {2021},
+  doi = {10.1073/pnas.2101784118},
+  publisher = {National Academy of Sciences},
+  issn = {0027-8424},
+  URL = {https://www.pnas.org/content/118/21/e2101784118},
+  eprint = {https://www.pnas.org/content/118/21/e2101784118.full.pdf},
+  journal = {Proceedings of the National Academy of Sciences}
+}
+```
+Package 2: jax-md
+```bash 
+@inproceedings{jaxmd2020,
+ author = {Schoenholz, Samuel S. and Cubuk, Ekin D.},
+ booktitle = {Advances in Neural Information Processing Systems},
+ publisher = {Curran Associates, Inc.},
+ title = {JAX M.D. A Framework for Differentiable Physics},
+ url = {https://papers.nips.cc/paper/2020/file/83d3d4b6c9579515e1679aca8cbc8033-Paper.pdf},
+ volume = {33},
+ year = {2020}
+}
+```
+
 
 
