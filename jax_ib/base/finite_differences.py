@@ -32,8 +32,8 @@ Example:
 
 import typing
 from typing import Optional, Sequence, Tuple
-from Jax_IB.base import grids
-from Jax_IB.base import interpolation
+from jax_ib.base import grids
+from jax_ib.base import interpolation
 import numpy as np
 import jax
 import jax.numpy as jnp
