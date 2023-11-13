@@ -33,7 +33,7 @@ To use a local version of the code, follow these steps:
    
 ### Example
 
-The repository contains two examples
+The repository contains two examples:
 
 - Flapping of an ellipse airfoi
 - Mixing in Journal bearing
