@@ -6,10 +6,10 @@ from jax_cfd.base import array_utils
 from jax_cfd.base import fast_diagonalization
 import jax.numpy as jnp
 from jax_cfd.base import pressure
-from Jax_IB.base import grids
-from Jax_IB.base import boundaries
-from Jax_IB.base import finite_differences as fd
-from Jax_IB.base import particle_class
+from jax_ib.base import grids
+from jax_ib.base import boundaries
+from jax_ib.base import finite_differences as fd
+from jax_ib.base import particle_class
 
 Array = grids.Array
 GridArray = grids.GridArray
