@@ -20,10 +20,10 @@ from typing import Optional
 import jax.scipy.sparse.linalg
 
 from jax_cfd.base import array_utils
-from Jax_IB.base import boundaries
+from jax_ib.base import boundaries
 from jax_cfd.base import fast_diagonalization
-from Jax_IB.base import finite_differences as fd
-from Jax_IB.base import grids
+from jax_ib.base import finite_differences as fd
+from jax_ib.base import grids
 
 Array = grids.Array
 GridArray = grids.GridArray
