@@ -2,10 +2,10 @@ import dataclasses
 from typing import Callable, Sequence, TypeVar
 import jax
 import tree_math
-from Jax_IB.base import boundaries
-from Jax_IB.base import grids
+from jax_ib.base import boundaries
+from jax_ib.base import grids
 from jax_cfd.base import time_stepping
-from Jax_IB.base import particle_class
+from jax_ib.base import particle_class
 
 
 PyTreeState = TypeVar("PyTreeState")
