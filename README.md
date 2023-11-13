@@ -1,5 +1,5 @@
-# jax_IB
-Immersed Boundary implementation in JAX-CFD
+# jax_ib
+Immersed Boundary implementation in jax-cfd library
 
 
 ## Overview
