@@ -18,11 +18,11 @@ from typing import Any, Callable, Iterable, Sequence, Tuple, Optional, Union
 from jax import lax
 import jax
 import jax.numpy as jnp
-from Jax_IB.base import grids
+from jax_ib.base import grids
 import numpy as np
 import scipy
 from jax.tree_util import register_pytree_node_class
-from Jax_IB.base import particle_class
+from jax_ib.base import particle_class
 
 BoundaryConditions = grids.BoundaryConditions
 GridArray = grids.GridArray
