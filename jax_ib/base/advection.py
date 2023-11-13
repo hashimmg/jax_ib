@@ -17,10 +17,10 @@
 from typing import Optional, Tuple
 import jax
 import jax.numpy as jnp
-from Jax_IB.base import boundaries
-from Jax_IB.base import finite_differences as fd
-from Jax_IB.base import grids
-from Jax_IB.base import interpolation
+from jax_ib.base import boundaries
+from jax_ib.base import finite_differences as fd
+from jax_ib.base import grids
+from jax_ib.base import interpolation
 
 GridArray = grids.GridArray
 GridArrayVector = grids.GridArrayVector
