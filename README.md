@@ -44,7 +44,7 @@ This project relies on the following external packages:
 jax-cfd, jax-md
 
 Citing External Packages
-If you use this code in your research and make use of the external packages listed, please ensure to cite the relevant works. Here are the citations for the packages used in this project:
+If you use this code in your research, please ensure to cite the relevant works. Here are the citations for the packages used in this project:
 
 Package 1: jax-cfd
 ```bash 
