@@ -18,8 +18,8 @@ from typing import Callable, Optional, Tuple, Union
 
 import jax
 import jax.numpy as jnp
-from Jax_IB.base import boundaries
-from Jax_IB.base import grids
+from jax_ib.base import boundaries
+from jax_ib.base import grids
 import numpy as np
 
 
