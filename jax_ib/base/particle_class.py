@@ -7,7 +7,7 @@ import jax
 import jax.numpy as jnp
 from jax.tree_util import register_pytree_node_class
 import numpy as np
-from Jax_IB.base import grids
+from jax_ib.base import grids
 
 
 Array = Union[np.ndarray, jax.Array]
