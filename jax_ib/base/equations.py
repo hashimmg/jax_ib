@@ -6,16 +6,16 @@ from typing import Callable, Optional
 import jax
 import jax.numpy as jnp
 
-from Jax_IB.base import advection
-from Jax_IB.base import diffusion
-from Jax_IB.base import grids
-from Jax_IB.base import pressure
+from jax_ib.base import advection
+from jax_ib.base import diffusion
+from jax_ib.base import grids
+from jax_ib.base import pressure
 from jax_cfd.base import pressure as pressureCFD
-from Jax_IB.base import time_stepping
-from Jax_IB.base import boundaries
-from Jax_IB.base import finite_differences
+from jax_ib.base import time_stepping
+from jax_ib.base import boundaries
+from jax_ib.base import finite_differences
 import tree_math
-from Jax_IB.base import particle_class
+from jax_ib.base import particle_class
 from jax_cfd.base import equations as equationsCFD
 
 GridArray = grids.GridArray
