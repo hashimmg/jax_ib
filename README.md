@@ -35,7 +35,7 @@ To use a local version of the code, follow these steps:
 
 The repository contains two examples:
 
-- Flapping of an ellipse airfoi
+- Flapping of an ellipse airfoil
 - Mixing in Journal bearing
 
 ### Other Packages Used
