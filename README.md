@@ -35,7 +35,7 @@ To use a local version of the code, follow these steps:
 
 The repository contains two examples:
 
-- Flapping of an ellipse airfoil
+- [Flapping of an ellipse airfoil](https://github.com/hashimmg/jax_ib/jax_ib/notebooks/Flapping_demo.ipy)
 - Mixing in Journal bearing
 
 ### Other Packages Used
