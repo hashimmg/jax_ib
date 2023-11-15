@@ -8,7 +8,7 @@ ml_requires = ['dm-haiku', 'einops', 'gin-config']
 tests_requires = ['absl-py', 'pytest', 'pytest-xdist', 'scikit-image']
 
 setuptools.setup(
-    name='jax_IB',
+    name='jax_ib',
     version='0.1.0',
     license='Apache 2.0',
     author='Alhashim',
