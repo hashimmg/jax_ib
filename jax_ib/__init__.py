@@ -1,2 +1,2 @@
-import Jax_IB.base
-import Jax_IB.MD
+import jax_ib.base
+import jax_ib.MD
