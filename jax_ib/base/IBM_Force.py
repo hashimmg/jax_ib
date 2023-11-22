@@ -1,6 +1,6 @@
 import jax.numpy as jnp
 import jax
-from Jax_IB.base import grids
+from jax_ib.base import grids
 
 def integrate_trapz(integrand,dx,dy):
     return jnp.trapz(jnp.trapz(integrand,dx=dx),dx=dy)
