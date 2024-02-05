@@ -1,8 +1,9 @@
 
 
 from typing import Callable, Optional
-import jax.scipy.sparse.linalg
-from jax_cfd.base import array_utils
+import scipy.linalg
+import numpy as np
+from jax_ib.base import array_utils
 from jax_cfd.base import fast_diagonalization
 import jax.numpy as jnp
 from jax_cfd.base import pressure
@@ -17,6 +18,42 @@ GridArrayVector = grids.GridArrayVector
 GridVariable = grids.GridVariable
 GridVariableVector = grids.GridVariableVector
 BoundaryConditions = grids.BoundaryConditions
+
+
+def laplacian_matrix_neumann(size: int, step: float) -> np.ndarray:
+  """Create 1D Laplacian operator matrix, with homogeneous Neumann BC."""
+  column = np.zeros(size)
+  column[0] = -2 / step ** 2
+  column[1] = 1 / step ** 2
+  matrix = scipy.linalg.toeplitz(column)
+  matrix[0, 0] = matrix[-1, -1] = -1 / step**2
+  return matrix
+
+
+def _rhs_transform(
+    u: grids.GridArray,
+    bc: boundaries.BoundaryConditions,
+) -> Array:
+  """Transform the RHS of pressure projection equation for stability.
+
+  In case of poisson equation, the kernel is subtracted from RHS for stability.
+
+  Args:
+    u: a GridArray that solves ∇²x = u.
+    bc: specifies boundary of x.
+
+  Returns:
+    u' s.t. u = u' + kernel of the laplacian.
+  """
+  u_data = u.data
+  for axis in range(u.grid.ndim):
+    if bc.types[axis][0] == boundaries.BCType.NEUMANN and bc.types[axis][
+        1] == boundaries.BCType.NEUMANN:
+      # if all sides are neumann, poisson solution has a kernel of constant
+      # functions. We substact the mean to ensure consistency.
+      u_data = u_data - jnp.mean(u_data)
+  return u_data
+  
 
 def projection_and_update_pressure(
     All_variables: particle_class.All_Variables,
@@ -70,6 +107,51 @@ def solve_fast_diag(
       hermitian=True, circulant=True, implementation=implementation)
   return grids.applied(pinv)(rhs)
 
+
+def solve_fast_diag_moving_wall(
+    v: GridVariableVector,
+    q0: Optional[GridVariable] = None,
+    implementation: Optional[str] = 'matmul') -> GridArray:
+  """Solve for channel flow pressure using fast diagonalization."""
+  del q0  # unused
+  ndim = len(v)
+
+  grid = grids.consistent_grid(*v)
+  rhs = fd.divergence(v)
+  laplacians = [
+      array_utils.laplacian_matrix(grid.shape[0], grid.step[0]),
+      array_utils.laplacian_matrix_neumann(grid.shape[1], grid.step[1]),
+  ]
+  for d in range(2, ndim):
+    laplacians += [array_utils.laplacian_matrix(grid.shape[d], grid.step[d])]
+  pinv = fast_diagonalization.pseudoinverse(
+      laplacians, rhs.dtype,
+      hermitian=True, circulant=False, implementation=implementation)
+  return grids.applied(pinv)(rhs)
+  
+  
+  
+def solve_fast_diag_Far_Field(
+    v: GridVariableVector,
+    q0: Optional[GridVariable] = None,
+    implementation: Optional[str] = None) -> GridArray:
+  """Solve for pressure using the fast diagonalization approach."""
+  del q0  # unused
+
+  grid = grids.consistent_grid(*v)
+  rhs = fd.divergence(v)
+  pressure_bc = boundaries.get_pressure_bc_from_velocity(v)
+  rhs_transformed = _rhs_transform(rhs, pressure_bc)
+  #laplacians = [
+  #          laplacian_matrix_neumann(grid.shape[0], grid.step[0]),
+  #          laplacian_matrix_neumann(grid.shape[1], grid.step[1]),
+  #]
+  laplacians = array_utils.laplacian_matrix_w_boundaries(
+      rhs.grid, rhs.offset, pressure_bc)
+  pinv = fast_diagonalization.pseudoinverse(
+      laplacians, rhs_transformed.dtype,
+      hermitian=True, circulant=False, implementation='matmul')
+  return grids.applied(pinv)(rhs)
 
 def calc_P(
     v: GridVariableVector,
