@@ -13,4 +13,4 @@ import jax_ib.base.interpolation
 import jax_ib.base.diffusion
 import jax_ib.base.finite_differences
 import jax_ib.base.kinematics
-
+import jax_ib.base.array_utils
