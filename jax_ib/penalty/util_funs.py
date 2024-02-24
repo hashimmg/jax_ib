@@ -85,9 +85,10 @@ def calc_perm(grid,circle_center,Rtheta,smoothening_fn,Know):
 
     #inv_perm = 20000#200000
     #G = (Rtheta[0]**2-((Y-circle_center[1])**2 + (X-circle_center[0])**2))/width
-    #G = (Rfinal**2-((Y-circle_center[1])**2 + (X-circle_center[0])**2))/width   ### ORIGINAL
+    G = (Rfinal**2-((Y-circle_center[1])**2 + (X-circle_center[0])**2))   ### ORIGINAL
    # return jnp.where(G>0,inv_perm*jnp.ones_like(G),jnp.zeros_like(G))
-    return smoothening_fn(((Y-circle_center[1])**2 + (X-circle_center[0])**2),Rtheta[0]**2,Know)
+   # return smoothening_fn(((Y-circle_center[1])**2 + (X-circle_center[0])**2),Rtheta[0]**2,Know)
+    return smoothening_fn(G,Know)
     #return inv_perm/2.0*(1.0 + jnp.tanh(G))
     #return inv_perm*jnp.heaviside(G,1.0)
 
