@@ -353,7 +353,7 @@ def navier_stokes_rk_penalty(
     u_final = convert_to_velocity_tree(u_star,ubc)
     
     u_final = covert_veloicty_to_All_variable_vecot(particles,u_final,pressure,Drag,Step_count,MD_var)
-    u_final = P(R(u_star))
+    u_final = P(u_star)
     #
     u_final = M(u_final)
     
