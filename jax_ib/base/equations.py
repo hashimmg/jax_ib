@@ -251,7 +251,7 @@ def semi_implicit_navier_stokes_penalty(
     diffuse: DiffuseFn = diffusion.diffuse,
     pressure_solve: Callable = pressureCFD.solve_fast_diag,
     forcing: Optional[ForcingFn] = None,
-    time_stepper: Callable = time_stepping.forward_euler_updated,
+    time_stepper: Callable = time_stepping.forward_euler_penalty,
 ) -> Callable[[GridVariableVector], GridVariableVector]:
   """Returns a function that performs a time step of Navier Stokes."""
 
@@ -264,7 +264,7 @@ def semi_implicit_navier_stokes_penalty(
       diffuse=diffuse,
       forcing=forcing)
 
-  pressure_projection = jax.named_call(pressure.projection, name='pressure')
+  pressure_projection = jax.named_call(pressure.projection_and_update_pressure, name='pressure')
   Reserve_BC = explicit_Reserve_BC(ReserveBC = boundaries.Reserve_BC,step_time = dt)
   update_BC = explicit_update_BC(updateBC = boundaries.update_BC,step_time = dt)
   #jax.named_call(boundaries.update_BC, name='Update_BC')
