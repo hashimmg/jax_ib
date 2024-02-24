@@ -235,7 +235,7 @@ def navier_stokes_rk_updated(
     
     
     
-    -0
+    
     u_final = convert_to_velocity_tree(u_star_star,ubc)
     
    
@@ -296,24 +296,46 @@ def navier_stokes_rk_penalty(
 
     def convert_to_velocity_vecot(u0):
         u = u0.tree
-
         return tree_math.Vector(tuple(u[i].array for i in range(len(u))))
         
     def convert_to_velocity_tree(m,bcs):
         return tree_math.Vector(tuple(grids.GridVariable(v,bc) for v,bc in zip(m.tree,bcs)))
     
+    def convert_all_variabl_to_velocity_vecot(u0):
+        u = u0.tree.velocity
+        #return tree_math.Vector(tuple(grids.GridVariable(v.array,v.bc) for v in u))
+        return  tree_math.Vector(u)
+    def covert_veloicty_to_All_variable_vecot(particles,m,pressure,Drag,Step_count,MD_var):
+        u = m.tree
+        #return tree_math.Vector(particle_class.All_Variables(particles, tuple(grids.GridVariable(v.array,v.bc) for v in u),pressure))
+        return tree_math.Vector(particle_class.All_Variables(particles,u,pressure,Drag,Step_count,MD_var))
+    
     def velocity_bc(u0):
-        u = u0.tree
-
+        u = u0.tree.velocity
         return tuple(u[i].bc for i in range(len(u)))
+    
+    def the_particles(u0):
+        return u0.tree.particles
+    def the_pressure(u0):
+        return u0.tree.pressure
+    def the_Drag(u0):
+        return u0.tree.Drag
+
+    particles = the_particles(u0)
+    ubc = velocity_bc(u0)  
+    pressure = the_pressure(u0)
+    Drag = the_Drag(u0)
+    Step_count = u0.tree.Step_count
+    MD_var = u0.tree.MD_var
+
+    
+    u0 = convert_all_variabl_to_velocity_vecot(u0)
     
     u[0] = convert_to_velocity_vecot(u0)
     k[0] = convert_to_velocity_vecot(F(u0))
+   
+   
     
-
-   
-   
-    ubc = velocity_bc(u0)
     u0 = convert_to_velocity_vecot(u0)
     
     for i in range(1, num_steps):
@@ -327,9 +349,12 @@ def navier_stokes_rk_penalty(
 
     #for ww in range(0,len(u0)):
     u_star = u0 + dt * sum(b[j] * k[j] for j in range(num_steps) if b[j])
+
+    u_final = convert_to_velocity_tree(u_star,ubc)
     
-    #u_final = P(R(u_star))
-    u_final = P(convert_to_velocity_tree(u_star,ubc))
+    u_final = covert_veloicty_to_All_variable_vecot(particles,u_final,pressure,Drag,Step_count,MD_var)
+    u_final = P(R(u_star))
+    #
     u_final = M(u_final)
     
         
