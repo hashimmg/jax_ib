@@ -514,19 +514,7 @@ def Reserve_BC(all_variable: particle_class.All_Variables,step_time: float) -> p
       grids.GridVariable(u.array, bc) for u, bc in zip(v, vel_bc))
     return particle_class.All_Variables(particles,v_updated,pressure,Drag,Step_count,MD_var)
   
-def Reserve_BC(v: grids.GridVariableVector,step_time: float) -> grids.GridVariableVector:
-    bcfn = v[0].bc.boundary_fn
-    dt = step_time
-    ts = v[0].bc.time_stamp/(1.0 + dt)# v[0].bc.time_stamp #v[0].bc.update_bc_(v[0].bc.time_stamp,dt)
-    #ts = dt
-    vx_bc = ((0.0,0.0),(bcfn(ts),bcfn(ts)))
-    vy_bc = ((0.0,0.0),(0.0,0.0))
-    vel_bc =(Moving_wall_boundary_conditions(ndim=2,bc_vals=vx_bc,time_stamp=ts,bc_fn=bcfn),Moving_wall_boundary_conditions(ndim=2,bc_vals=vy_bc,time_stamp=ts,bc_fn=bcfn))
-    #return v
-    #return tuple(grids.GridVariable(u.array, u.bc) for u in v)
-   
-    return tuple(     
-      grids.GridVariable(u.array, bc) for u, bc in zip(v, vel_bc))
+
 
 def update_BC(all_variable: particle_class.All_Variables,step_time: float) -> particle_class.All_Variables:
     v = all_variable.velocity
