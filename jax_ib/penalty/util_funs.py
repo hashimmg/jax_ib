@@ -97,7 +97,7 @@ def perm_vmap_multiple_particles(grid,particles,smoothening_fn,Know):
       
 
       def foo(tree_arg):
-        (particle_center,geometry_param) = tree_arg
+        (particle_center,geometry_param,_,_) = tree_arg
         R_theta =  calc_r(geometry_param,Grid_p)
         return calc_perm(grid,particle_center,R_theta,smoothening_fn,Know)
 
