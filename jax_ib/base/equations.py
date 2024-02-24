@@ -240,3 +240,41 @@ def semi_implicit_navier_stokes_timeBC(
   )
   step_fn = time_stepper(ode, dt)
   return step_fn
+
+
+def semi_implicit_navier_stokes_penalty(
+    density: float,
+    viscosity: float,
+    dt: float,
+    grid: grids.Grid,
+    convect: Optional[ConvectFn] = None,
+    diffuse: DiffuseFn = diffusion.diffuse,
+    pressure_solve: Callable = pressureCFD.solve_fast_diag,
+    forcing: Optional[ForcingFn] = None,
+    time_stepper: Callable = time_stepping.forward_euler_updated,
+) -> Callable[[GridVariableVector], GridVariableVector]:
+  """Returns a function that performs a time step of Navier Stokes."""
+
+  explicit_terms = navier_stokes_explicit_terms(
+      density=density,
+      viscosity=viscosity,
+      dt=dt,
+      grid=grid,
+      convect=convect,
+      diffuse=diffuse,
+      forcing=forcing)
+
+  pressure_projection = jax.named_call(pressure.projection, name='pressure')
+  Reserve_BC = explicit_Reserve_BC(ReserveBC = boundaries.Reserve_BC,step_time = dt)
+  update_BC = explicit_update_BC(updateBC = boundaries.update_BC,step_time = dt)
+  #jax.named_call(boundaries.update_BC, name='Update_BC')
+  # TODO(jamieas): Consider a scheme where pressure calculations and
+  # advection/diffusion are staggered in time.
+  ode = time_stepping.ExplicitNavierStokesODE_BCtime(
+      explicit_terms,
+      lambda v: pressure_projection(v, pressure_solve),
+      update_BC,
+      Reserve_BC,
+  )
+  step_fn = time_stepper(ode, dt)
+  return step_fn
