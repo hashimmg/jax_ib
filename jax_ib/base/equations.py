@@ -270,7 +270,7 @@ def semi_implicit_navier_stokes_penalty(
   #jax.named_call(boundaries.update_BC, name='Update_BC')
   # TODO(jamieas): Consider a scheme where pressure calculations and
   # advection/diffusion are staggered in time.
-  ode = time_stepping.ExplicitNavierStokesODE_BCtime(
+  ode = time_stepping.ExplicitNavierStokesODE_Penalty(
       explicit_terms,
       lambda v: pressure_projection(v, pressure_solve),
       update_BC,
