@@ -11,6 +11,39 @@ from jax_ib.base import particle_class
 PyTreeState = TypeVar("PyTreeState")
 TimeStepFn = Callable[[PyTreeState], PyTreeState]
 
+
+class ExplicitNavierStokesODE_Penalty:
+  """Spatially discretized version of Navier-Stokes.
+
+  The equation is given by:
+
+    ∂u/∂t = explicit_terms(u)
+    0 = incompressibility_constraint(u)
+  """
+
+  def __init__(self, explicit_terms, pressure_projection,update_BC,Reserve_BC):
+    self.explicit_terms = explicit_terms
+    self.pressure_projection = pressure_projection
+    self.update_BC = update_BC
+    self.Reserve_BC = Reserve_BC
+
+
+  def explicit_terms(self, state):
+    """Explicitly evaluate the ODE."""
+    raise NotImplementedError
+
+  def pressure_projection(self, state):
+    """Enforce the incompressibility constraint."""
+    raise NotImplementedError
+
+  def update_BC(self, state):
+    """Update Wall BC """
+    raise NotImplementedError
+
+  def Reserve_BC(self, state):
+    """Revert spurious updates of Wall BC """
+    raise NotImplementedError
+
 class ExplicitNavierStokesODE_BCtime:
   """Spatially discretized version of Navier-Stokes.
 
@@ -223,6 +256,99 @@ def navier_stokes_rk_updated(
 
   return step_fn
 
+def navier_stokes_rk_penalty(
+    tableau: ButcherTableau_updated,
+    equation: ExplicitNavierStokesODE_BCtime,
+    time_step: float,
+) -> TimeStepFn:
+  """Create a forward Runge-Kutta time-stepper for incompressible Navier-Stokes.
+
+  This function implements the reference method (equations 16-21), rather than
+  the fast projection method, from:
+    "Fast-Projection Methods for the Incompressible Navier–Stokes Equations"
+    Fluids 2020, 5, 222; doi:10.3390/fluids5040222
+
+  Args:
+    tableau: Butcher tableau.
+    equation: equation to use.
+    time_step: overall time-step size.
+
+  Returns:
+    Function that advances one time-step forward.
+  """
+  # pylint: disable=invalid-name
+  dt = time_step
+  F = tree_math.unwrap(equation.explicit_terms)
+  P = tree_math.unwrap(equation.pressure_projection)
+  M = tree_math.unwrap(equation.update_BC)
+  R = tree_math.unwrap(equation.Reserve_BC)
+
+  a = tableau.a
+  b = tableau.b
+  num_steps = len(b)
+  
+  @tree_math.wrap
+  def step_fn(u0):
+    #print('vector',u0)
+    #new_time = 0#u0[0].bc.time_stamp + dt
+    u = [None] * num_steps
+    k = [None] * num_steps
+
+    def convert_to_velocity_vecot(u0):
+        u = u0.tree
+
+        return tree_math.Vector(tuple(u[i].array for i in range(len(u))))
+        
+    def convert_to_velocity_tree(m,bcs):
+        return tree_math.Vector(tuple(grids.GridVariable(v,bc) for v,bc in zip(m.tree,bcs)))
+    
+    def velocity_bc(u0):
+        u = u0.tree
+
+        return tuple(u[i].bc for i in range(len(u)))
+    
+    u[0] = convert_to_velocity_vecot(u0)
+    k[0] = convert_to_velocity_vecot(F(u0))
+    
+
+   
+   
+    ubc = velocity_bc(u0)
+    u0 = convert_to_velocity_vecot(u0)
+    
+    for i in range(1, num_steps):
+        #u_star = u0[ww].array + sum(a[i-1][j]*k[j][ww].array for j in range(i) if a[i-1][j])
+        
+      u_star = u0 + dt * sum(a[i-1][j] * k[j] for j in range(i) if a[i-1][j])
+    
+      #u[i] = P(R(u_star))
+      u[i] = convert_to_velocity_vecot(P(convert_to_velocity_tree(u_star,ubc)))  
+      k[i] = convert_to_velocity_vecot(F(convert_to_velocity_tree(u[i],ubc)))
+
+    #for ww in range(0,len(u0)):
+    u_star = u0 + dt * sum(b[j] * k[j] for j in range(num_steps) if b[j])
+    
+    #u_final = P(R(u_star))
+    u_final = P(convert_to_velocity_tree(u_star,ubc))
+    u_final = M(u_final)
+    
+        
+    
+    
+    return u_final
+
+  return step_fn
+
+def forward_euler_penalty(
+    equation: ExplicitNavierStokesODE_Penalty, time_step: float, 
+) -> TimeStepFn:
+  return jax.named_call(
+      navier_stokes_rk_penalty(
+          ButcherTableau_updated(a=[], b=[1], c=[0]),
+          equation,
+          time_step),
+      name="forward_euler",
+  )
 
 def forward_euler_updated(
     equation: ExplicitNavierStokesODE_BCtime, time_step: float, 
