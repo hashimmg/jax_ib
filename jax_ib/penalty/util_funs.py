@@ -1,6 +1,7 @@
 import jax_ib.base as ib
 import jax
 import jax.numpy as jnp
+import numpy as np
 
 def arbitrary_obstacle(pressure_gradient,permeability):
 
